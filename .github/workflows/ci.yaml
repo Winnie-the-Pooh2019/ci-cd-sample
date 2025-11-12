@@ -1,0 +1,35 @@
+name: App CI
+
+on:
+  pull_request:
+    branches: ["master"]
+  push:
+    branches: ["master"]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Compile source code
+        run: bash ./scripts/build.sh
+
+      - name: Compile tests
+        run: bash ./scripts/build-test.sh
+
+      - name: Run tests
+        run: bash ./scripts/run-test.sh
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name:
