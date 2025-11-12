@@ -5,7 +5,7 @@ mkdir -p ./out
 CP=$(find lib -name "*.jar" | paste -sd ":" -)
 
 kotlinc \
-  $(find src -name "*.kt") \
+  $(find src/main -name "*.kt") \
   -cp "$CP" \
   -include-runtime \
   -d out/classes
