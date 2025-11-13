@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-test:
-    runs-on: ubuntu-latestc
+    runs-on: ubuntu-latest
     permissions:
       actions: write
       contents: read
@@ -24,18 +24,49 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Compile source code
-        run: bash ./scripts/build.sh
-
-      - name: Compile tests
-        run: bash ./scripts/build-test.sh
-
-      - name: Run tests
-        run: bash ./scripts/run-test.sh
-
       - name: CodeQL Initialization
         uses: github/codeql-action/init@v3
         with:
           language: java
+
+      - name: Build application JAR
+        run: bash ./scripts/build.sh
+
+      - name: Compile JUnit tests
+        run: bash ./scripts/build-test.sh
+
+      - name: Run JUnit tests
+        run: bash ./scripts/run-test.sh
+
+      - name: Run end-to-end tests
+        run: bash ./scripts/test.sh
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-jar
+          path: out/app.jar
+          retention-days: 7
+
       - name: CodeQL Analysis
         uses: github/codeql-action/analyze@v3
+
+      - name: Telegram failure notification
+        if: failure()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+
+          if [[ -z "${TELEGRAM_BOT_TOKEN}" || -z "${TELEGRAM_CHAT_ID}" ]]; then
+            echo "Telegram secrets are not configured. Skipping notification."
+            exit 0
+          fi
+
+          MESSAGE="❌ CI pipeline failed for ${{ github.repository }}. Details: ${RUN_URL}"
+          curl -sS -X POST \
+            "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -d chat_id="${TELEGRAM_CHAT_ID}" \
+            -d text="${MESSAGE}"
