@@ -24,11 +24,6 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: CodeQL Initialization
-        uses: github/codeql-action/init@v3
-        with:
-          language: java
-
       - name: Build application JAR
         run: bash ./scripts/build.sh
 
@@ -48,8 +43,10 @@ jobs:
           path: out/app.jar
           retention-days: 7
 
-      - name: CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Telegram failure notification
         if: failure()
