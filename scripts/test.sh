@@ -10,7 +10,7 @@ if [[ ! -f "$JAR_PATH" ]]; then
   exit 1
 fi
 
-EXPECTED_OUTPUT="Привет, {\"name\":\"${USER_NAME}\"}!"
+EXPECTED_OUTPUT="Привет, {\"user_name\":\"${USER_NAME}\"}!"
 ACTUAL_OUTPUT=$(java -cp "${JAR_PATH}:lib/*" ${MAIN_CLASS} -n "${USER_NAME}")
 
 if [[ "$ACTUAL_OUTPUT" != "$EXPECTED_OUTPUT" ]]; then
