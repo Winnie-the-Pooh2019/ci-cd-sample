@@ -27,8 +27,8 @@ jobs:
           echo "image=$IMAGE" >> "$GITHUB_OUTPUT"
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
 
-      - name: Prepare Docker context
-        run: cp dist/app.jar app.jar
+      - name: Build fat-jar
+        run: bash ./scripts/build-fat-jar.sh
 
       - name: Log in to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
@@ -59,7 +59,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/app.jar
+          asset_path: out/app-fat.jar
           asset_name: app-${{ steps.meta.outputs.tag }}.jar
           asset_content_type: application/java-archive
 
