@@ -19,10 +19,9 @@ jobs:
       - name: Prepare metadata
         id: meta
         run: |
-          OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
           REPO=$(echo "${{ github.event.repository.name }}" | tr '[:upper:]' '[:lower:]')
           IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/${REPO}:${{ github.sha }}"
-          TAG="release-${{ github.event.workflow_run.run_number }}"
+          TAG="release-${{ github.run_number }}"
           echo "image=$IMAGE" >> "$GITHUB_OUTPUT"
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
 
@@ -48,7 +47,7 @@ jobs:
           tag_name: ${{ steps.meta.outputs.tag }}
           release_name: Release ${{ steps.meta.outputs.tag }}
           body: |
-            Automated release generated from CI workflow run #${{ github.event.workflow_run.run_number }}.
+            Automated release generated from run #${{ github.run_number }}.
             Docker image: `${{ steps.meta.outputs.image }}`
           draft: false
           prerelease: false
