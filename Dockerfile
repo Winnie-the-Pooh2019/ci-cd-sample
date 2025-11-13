@@ -2,6 +2,7 @@ FROM eclipse-temurin:21-jre
 
 COPY ./lib /app/lib
 COPY ./src/main /app/src/main
+COPY ./scripts /app/scripts
 
 WORKDIR /app
 
