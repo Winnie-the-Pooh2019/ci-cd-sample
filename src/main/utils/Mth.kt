@@ -1,3 +1,5 @@
+package utils
+
 import kotlin.math.pow
 
 class Mth {
