@@ -12,3 +12,27 @@
 
 ## Telegram оповещения
 Для получения сообщений о падении пайплайна добавьте в Secrets репозитория `TELEGRAM_BOT_TOKEN` и `TELEGRAM_CHAT_ID`. Workflow автоматически отправит ссылку на упавший запуск в указанный чат.
+
+
+---
+
+```mermaid
+erDiagram
+    CUSTOMER ||--o{ ORDER : places
+    CUSTOMER {
+        string name
+        string custNumber
+        string sector
+    }
+    ORDER ||--|{ LINE-ITEM : contains
+    ORDER {
+        int orderNumber
+        string deliveryAddress
+    }
+    LINE-ITEM {
+        string productCode
+        int quantity
+        float pricePerUnit
+    }
+
+```

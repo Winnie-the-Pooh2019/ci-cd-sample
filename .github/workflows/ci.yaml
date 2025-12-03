@@ -16,6 +16,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Cache build dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            out/classes
+            out/app.jar
+          key: ${{ runner.os }}-build-${{ hashFiles('scripts/build*.sh', 'scripts/run*.sh', 'src/**/*.kt', 'lib/*jar') }}
+          restore-keys: |
+            ${{ runner.os }}-build-
+
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -33,13 +43,6 @@ jobs:
 
       - name: Run end-to-end tests
         run: bash ./scripts/test.sh
-
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-jar
-          path: out/app.jar
-          retention-days: 7
 
       - name: SonarQube Scan
         uses: SonarSource/sonarcloud-github-action@4006f663ecaf1f8093e8e4abb9227f6041f52216

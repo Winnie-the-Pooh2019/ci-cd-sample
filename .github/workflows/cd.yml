@@ -77,8 +77,18 @@ jobs:
             exit 0
           fi
 
-          MESSAGE="CD pipeline ${STATUS}. Tag ${TAG_NAME}. Image ${IMAGE}. Details: ${RUN_URL}"
+          # Pick an icon based on job status
+          ICON="❌"
+          case "${STATUS,,}" in
+            success) ICON="✅" ;;
+            failure) ICON="❌" ;;
+            cancelled) ICON="⏸️" ;;
+            *) ICON="ℹ️" ;;
+          esac
+
+          TEXT="${ICON} Релиз: ${STATUS}\n🏷️ Тег: ${TAG_NAME}\n📦 Образ: ${IMAGE}\n🔗 Детали: ${RUN_URL}"
           curl -sS -X POST \
             "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
             -d chat_id="${TELEGRAM_CHAT_ID}" \
-            -d text="${MESSAGE}"
+            -d disable_web_page_preview=true \
+            -d text="${TEXT}"
